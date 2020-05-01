@@ -12,7 +12,7 @@ export default function App() {
 
       <TouchableOpacity
         onPress={() => alert('Hello, world!')} style={styles.button}>
-        <Text style={styles.buttonText}>Alert me</Text>
+        <Text style={styles.buttonText}>Testa här</Text>
       </TouchableOpacity>
 
     </View>
