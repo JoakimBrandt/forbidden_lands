@@ -5,9 +5,9 @@
 [![Build Status][travis-image]][travis-url]
 [![Downloads Stats][npm-downloads]][npm-url]
 
-One to two paragraph statement about your product and what it does.
+This is a cross-platform software designed to be an assistant for Fria Ligan's roleplaying game Svärdets Sång (Forbidden Lands).
 
-![](header.png)
+![https://myogaming.se/wp-content/uploads/2019/01/forbiddenlands.jpg](header.png)
 
 ## Installation
 
