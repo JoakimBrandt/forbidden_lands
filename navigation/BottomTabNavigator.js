@@ -19,7 +19,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         name="home"
         component={HomeScreen}
         options={{
-          title: 'Hem',
+          title: 'Keep Keeper',
           tabBarIcon: ({ focused }) => {
             return <Ionicons name="ios-bonfire" size={20} color="black" />
           } 
