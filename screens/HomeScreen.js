@@ -17,7 +17,6 @@ export default function HomeScreen() {
     fetchAPIData()
   },[]);
   
-  
   return (
     <View style={GLOBALSTYLES.container}>   
       <View>
@@ -27,7 +26,7 @@ export default function HomeScreen() {
             transparent={false}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
+              Alert.alert('Modal has been closedd.');
             }}>
             <View style={GLOBALSTYLES.modalStyle}>
               <Text style={GLOBALSTYLES.text}>
