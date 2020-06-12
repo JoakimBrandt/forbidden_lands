@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import {useState} from 'react';
 import { TextInput, Alert, StyleSheet, Button, Text, View, TouchableOpacity, TouchableHighlight, Modal } from 'react-native';
-import { RectButton, FlatList} from 'react-native-gesture-handler';
+import { RectButton, FlatList, ScrollView} from 'react-native-gesture-handler';
 import GLOBALVARIABLES from '../globals/variables'
 import GLOBALFUNCTIONS from '../globals/functions'
 import GLOBALSTYLES from './styles/styles'
@@ -12,18 +12,22 @@ export default function FunctionsScreen() {
     const [newAmountOfFunctions, setNewAmountOfFunctions] = React.useState(0);
     const [editedFunctionsID, setEditedFunctionsID] = React.useState('');
     const [currentFunctionEditing, setCurrentFunctionEditing] = React.useState('');
-    const [functionsModalVisible, setFunctionsModalVisible] = useState(false);
     const [functionsList, setFunctionsList] = React.useState('');
+    const [updateFunctionsModalVisible, setUpdateFunctionsModalVisible] = useState(false);
+    
+    const [createFunctionModalVisible, setCreateFunctionModalVisible] = useState(false);
+    const [newFunctionName, setNewFunctionName] = React.useState('');
+    const [newFunctionAmount, setNewFunctionAmount] = React.useState('');
 
     async function fetchFunctionsData() {
       await GLOBALFUNCTIONS.fetchFunctions()
       await setFunctionsList(GLOBALVARIABLES.functions)
     }
 
-    function setUpModal(name, id, boolean) {
+    function setUpdateModal(name, id, boolean) {
       setCurrentFunctionEditing(name)
       setEditedFunctionsID(id)
-      setFunctionsModalVisible(boolean)
+      setUpdateFunctionsModalVisible(boolean)
     }
 
     React.useEffect(() => {
@@ -36,7 +40,7 @@ export default function FunctionsScreen() {
           <Modal
             animationType="fade"
             transparent={false}
-            visible={functionsModalVisible}
+            visible={updateFunctionsModalVisible}
             onRequestClose={() => {
               Alert.alert('Modal has been closed.');
             }}>
@@ -75,7 +79,7 @@ export default function FunctionsScreen() {
                           GLOBALFUNCTIONS.updateFunctions(editedFunctionsID, newAmountOfFunctions) 
                           fetchFunctionsData()
                           setNewAmountOfFunctions(0)
-                          setFunctionsModalVisible(!functionsModalVisible)
+                          setUpdateFunctionsModalVisible(!updateFunctionsModalVisible)
                         }}
                       ],
                       { cancelable: false }
@@ -88,12 +92,94 @@ export default function FunctionsScreen() {
                   onPress={() => {
                       fetchFunctionsData()
                       setNewAmountOfFunctions(0)
-                      setFunctionsModalVisible(!functionsModalVisible)
+                      setUpdateFunctionsModalVisible(!updateFunctionsModalVisible)
                     }
                   }
                 />
               </View>
             </View>
+          </Modal>     
+          <Modal
+            animationType="fade"
+            transparent={false}
+            visible={createFunctionModalVisible}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.');
+            }}>
+            <View>
+                <ScrollView style={GLOBALSTYLES.scrollView}>
+                  <Text style={GLOBALSTYLES.text}>
+                    Skapar ny funktion, vänligen fyll i information nedan! {"\n"} {"\n"}
+                  </Text>
+
+                  <Text style={GLOBALSTYLES.text}>
+                    Namn på funktionen:
+                  </Text>
+                  <TextInput
+                    style={GLOBALSTYLES.textInput}
+                    onChangeText={text => setNewFunctionName(text)}
+                    value={newFunctionName}
+                  />
+
+                  <Text style={GLOBALSTYLES.text}>
+                    Antal:
+                  </Text>
+                  <TextInput
+                    style={GLOBALSTYLES.textInput}
+                    onChangeText={text => setNewFunctionAmount(text)}
+                    value={newFunctionAmount}
+                    keyboardType={'numeric'}
+                  />
+
+                  <Text style={GLOBALSTYLES.text}>
+                    Namn: {newFunctionName} {"\n"}
+                    Antal: {newFunctionAmount}{"\n"}
+                  </Text>
+                
+                  <Button
+                    style={styles.headerText}
+                    title="Bekräfta"
+                    onPress={() => {
+                      Alert.alert(
+                        "Skicka till API?",
+                        "",
+                        [
+                          {
+                            text: "Avbryt",
+                            onPress: () =>  console.log("Cancel Pressed"),
+                            style: "cancel"
+                          },
+                          { text: "OK", onPress: () => { 
+                            console.log("OK Pressed")
+
+                            let newFunction = {
+                              name: newFunctionName,
+                              amount: newFunctionAmount,
+                            }
+
+                            GLOBALFUNCTIONS.createFunction(newFunction)
+                            fetchFunctionsData()
+                            setNewFunctionName('')
+                            setNewFunctionAmount('')
+                            setCreateFunctionModalVisible(!createFunctionModalVisible)
+                          }}
+                        ],
+                        { cancelable: false }
+                      );
+                    }}
+                  />
+                  <Button
+                    style={styles.headerText}
+                    title="Avbryt"
+                    onPress={() => {
+                        setNewFunctionAmount('')
+                        setNewFunctionName('')
+                        setCreateFunctionModalVisible(!createFunctionModalVisible)
+                      }
+                    }
+                  />
+                </ScrollView>
+              </View>
           </Modal>
         </View>
 
@@ -101,65 +187,27 @@ export default function FunctionsScreen() {
           data={ functionsList }
           renderItem={
             ({ item }) => {
-              switch (item.name) {
-                case "brunn":
-                  return(
-                    <OptionButton
-                      icon="ios-brush"
-                      information={item}
-                      onPress={() => {
-                        setUpModal(item.name, item.id, true)
-                      }}
-                    />
-                  )
-                case "stenbrott":
-                  return(
-                    <OptionButton
-                      icon="ios-hammer"
-                      information={item}
-                      onPress={() =>{
-                        setUpModal(item.name, item.id, true)
-                      }}
-                    />
-                  )
-
-                case "vakt":
-                return(
-                  <OptionButton
-                    icon="ios-body"
-                    information={item}
-                    onPress={() => {
-                      setUpModal(item.name, item.id, true)
-                    }}
-                  />
-                )
-
-                case "skogshuggare":
-                return(
-                  <OptionButton
-                    icon="ios-cloudy"
-                    information={item}
-                    onPress={() => {
-                      setUpModal(item.name, item.id, true)
-                    }}
-                  />
-                )
-              
-                default:
-                  return(
-                    <OptionButton
-                      icon="ios-help"
-                      information={item}
-                      onPress={() => {
-                        setUpModal(item.name, item.id, true)
-                      }}
-                    />
-                  )
-              }
+              return(
+                <OptionButton
+                  icon="ios-build"
+                  information={item}
+                  onPress={() => {
+                    setUpdateModal(item.name, item.id, true)
+                  }}
+                />
+              )
             }
           }
           keyExtractor={(item, index) => index.toString()}
         />
+        <View style={styles.option}>
+          <Button
+            title="Lägg till funktion"
+            onPress={() => 
+              setCreateFunctionModalVisible(true)
+            }
+          />
+        </View>
 
         <View style={styles.option}>
           <Button

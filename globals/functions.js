@@ -124,6 +124,20 @@ module.exports = {
         })
     },
 
+    createFunction: async (functionData) => {
+
+        await axios.post('http://18.197.158.213/functions', {
+            'name':functionData.name,
+            'amount':functionData.amount,
+        })
+        .then((response) => {
+            console.log(response)
+        })
+        .catch(error => {
+            console.log("THIS IS AN ERROR: " + error)
+        })
+    },
+
     gatherAllResources: async () => {
 
         let newAmountOfStone = 0;

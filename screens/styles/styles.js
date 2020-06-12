@@ -4,7 +4,8 @@ export default StyleSheet.create({
 
     scrollView: {
         marginTop: 100,
-        marginBottom: 400
+        marginBottom: 100,
+        paddingBottom: 300
     },
     refreshButton: {
         backgroundColor: '#fdfdfd',
