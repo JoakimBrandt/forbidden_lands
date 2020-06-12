@@ -1,8 +1,8 @@
-import { Ionicons, Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, AntDesign, Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { useState } from 'react';
-import { TextInput, Alert, StyleSheet, Button, Text, View, TouchableOpacity, TouchableHighlight, Modal } from 'react-native';
-import { RectButton, FlatList} from 'react-native-gesture-handler';
+import { TextInput, Alert, Button, StyleSheet, Text, View, TouchableOpacity, TouchableHighlight, Modal } from 'react-native';
+import { RectButton, FlatList, ScrollView} from 'react-native-gesture-handler';
 import GLOBALVARIABLES from '../globals/variables'
 import GLOBALFUNCTIONS from '../globals/functions'
 import GLOBALSTYLES from './styles/styles'
@@ -12,18 +12,26 @@ export default function ServantsScreen() {
     const [newAmountOfServants, setNewAmountOfServants] = React.useState(0);
     const [editedServantsID, seteditedServantsID] = React.useState('');
     const [currentServantEditing, setCurrentServantEditing] = React.useState('');
-    const [servantsModalVisible, setServantsModalVisible] = useState(false);
+    const [updateServantModalVisible, setUpdateServantModalVisible] = useState(false);
+    const [createServantModalVisible, setCreateServantModalVisible] = useState(false);
     const [servantsList, setServantsList] = React.useState('');
+
+    const [newServantName, setNewServantName] = React.useState('');
+    const [newServantAmount, setNewServantAmount] = React.useState('');
+    const [newServantSalary, setNewServantSalary] = React.useState('');
+    const [newServantProductionAmount, setNewServantProductionAmount] = React.useState('');
+    const [newServantProductionType, setNewServantProductionType] = React.useState('');
+
 
     async function fetchServantsData() {
       await GLOBALFUNCTIONS.fetchServants()
       await setServantsList(GLOBALVARIABLES.servants)
     }
 
-    function setUpModal(name, id, boolean) {
+    function setupUpdateServantModal(name, id, boolean) {
       setCurrentServantEditing(name)
       seteditedServantsID(id)
-      setServantsModalVisible(boolean)
+      setUpdateServantModalVisible(boolean)
     }
 
     React.useEffect(() => {
@@ -36,7 +44,7 @@ export default function ServantsScreen() {
           <Modal
             animationType="fade"
             transparent={false}
-            visible={servantsModalVisible}
+            visible={updateServantModalVisible}
             onRequestClose={() => {
               Alert.alert('Modal has been closed.');
             }}>
@@ -75,7 +83,7 @@ export default function ServantsScreen() {
                           GLOBALFUNCTIONS.updateServants(editedServantsID, newAmountOfServants) 
                           fetchServantsData()
                           setNewAmountOfServants(0)
-                          setServantsModalVisible(!servantsModalVisible)
+                          setUpdateServantModalVisible(!updateServantModalVisible)
                         }}
                       ],
                       { cancelable: false }
@@ -87,12 +95,131 @@ export default function ServantsScreen() {
                   title="Avbryt"
                   onPress={() => {
                       setNewAmountOfServants(0)
-                      setServantsModalVisible(!servantsModalVisible)
+                      setUpdateServantModalVisible(!updateServantModalVisible)
                     }
                   }
                 />
               </View>
             </View>
+          </Modal>
+          <Modal
+            animationType="fade"
+            transparent={false}
+            visible={createServantModalVisible}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.');
+            }}>
+            <View>
+                <ScrollView style={GLOBALSTYLES.scrollView}>
+                  <Text style={GLOBALSTYLES.text}>
+                    Skapar ny tjänare, vänligen fyll i information nedan! {"\n"} {"\n"}
+                  </Text>
+
+                  <Text style={GLOBALSTYLES.text}>
+                    Namn på tjänaren:
+                  </Text>
+                  <TextInput
+                    style={GLOBALSTYLES.textInput}
+                    onChangeText={text => setNewServantName(text)}
+                    value={newAmountOfServants}
+                  />
+
+                  <Text style={GLOBALSTYLES.text}>
+                    Lön:
+                  </Text>
+                  <TextInput
+                    style={GLOBALSTYLES.textInput}
+                    onChangeText={text => setNewServantSalary(text)}
+                    value={newAmountOfServants}
+                    keyboardType={'numeric'}
+                  />
+                  
+                  <Text style={GLOBALSTYLES.text}>
+                    Antal tjänare:
+                  </Text>
+                  <TextInput
+                    style={GLOBALSTYLES.textInput}
+                    onChangeText={text => setNewServantAmount(text)}
+                    value={newAmountOfServants}
+                    keyboardType={'numeric'}
+                  />
+
+                  <Text style={GLOBALSTYLES.text}>
+                    Produktionsmängd:
+                  </Text>
+                  <TextInput
+                    style={GLOBALSTYLES.textInput}
+                    onChangeText={text => setNewServantProductionAmount(text)}
+                    value={newAmountOfServants}
+                    keyboardType={'numeric'}
+                  />
+
+                  <Text style={GLOBALSTYLES.text}>
+                    Produktionssort (vilken typ av resurs tjänaren producerar):
+                  </Text>
+                  <TextInput
+                    style={GLOBALSTYLES.textInput}
+                    onChangeText={text => setNewServantProductionType(text)}
+                    value={newAmountOfServants}
+                  />
+                
+
+                  <Text style={GLOBALSTYLES.text}>
+                    Namn: {newServantName} {"\n"}
+                    Antal: {newServantAmount}{"\n"}
+                    Lön: {newServantSalary}{"\n"}
+                    Produktionsmängd: {newServantProductionAmount}{"\n"}
+                    Produktionstyp: {newServantProductionType}
+                  </Text>
+                
+                  <Button
+                    style={styles.headerText}
+                    title="Bekräfta"
+                    onPress={() => {
+                      Alert.alert(
+                        "Skicka till API?",
+                        "",
+                        [
+                          {
+                            text: "Avbryt",
+                            onPress: () =>  console.log("Cancel Pressed"),
+                            style: "cancel"
+                          },
+                          { text: "OK", onPress: () => { 
+                            console.log("OK Pressed")
+
+                            let newServant = {
+                              name: newServantName,
+                              amount: newServantAmount,
+                              salary: newServantSalary,
+                              production_type: newServantProductionType,
+                              production_amount: newServantProductionAmount
+                            }
+                            GLOBALFUNCTIONS.createServant(newServant)
+                            fetchServantsData()
+                            setNewServantName('')
+                            setNewServantAmount('')
+                            setNewServantSalary('')
+                            setNewServantProductionAmount('')
+                            setNewServantProductionType('')
+                            setCreateServantModalVisible(!createServantModalVisible)
+                          }}
+                        ],
+                        { cancelable: false }
+                      );
+                    }}
+                  />
+                  <Button
+                    style={styles.headerText}
+                    title="Avbryt"
+                    onPress={() => {
+                        setNewAmountOfServants(0)
+                        setCreateServantModalVisible(!createServantModalVisible)
+                      }
+                    }
+                  />
+                </ScrollView>
+              </View>
           </Modal>
         </View>
 
@@ -100,61 +227,15 @@ export default function ServantsScreen() {
           data={ servantsList }
           renderItem={
             ({ item }) => {
-              switch (item.name) {
-                case "alltiallo":
-                  return(
-                    <OptionButton
-                      icon="ios-brush"
-                      information={item}
-                      onPress={() => {
-                        setUpModal(item.name, item.id, true)
-                      }}
-                    />
-                  )
-                case "stenhuggare":
-                  return(
-                    <OptionButton
-                      icon="ios-hammer"
-                      information={item}
-                      onPress={() =>{
-                        setUpModal(item.name, item.id, true)
-                      }}
-                    />
-                  )
-
-                case "vakt":
-                return(
-                  <OptionButton
-                    icon="ios-star"
-                    information={item}
-                    onPress={() => {
-                      setUpModal(item.name, item.id, true)
-                    }}
-                  />
-                )
-
-                case "skogshuggare":
-                return(
-                  <OptionButton
-                    icon="ios-basket"
-                    information={item}
-                    onPress={() => {
-                      setUpModal(item.name, item.id, true)
-                    }}
-                  />
-                )
-              
-                default:
-                  return(
-                    <OptionButton
-                      icon="ios-help"
-                      information={item}
-                      onPress={() => {
-                        setUpModal(item.name, item.id, true)
-                      }}
-                    />
-                  )
-              }
+              return (
+                <OptionButton
+                  icon="ios-body"
+                  information={item}
+                  onPress={() => {
+                    setupUpdateServantModal(item.name, item.id, true)
+                  }}
+                />
+              )
             }
           }
           keyExtractor={(item, index) => index.toString()}
@@ -162,16 +243,27 @@ export default function ServantsScreen() {
 
         <View style={styles.option}>
           <Button
-            style={styles.headerText}
-            title="Uppdatera"
+            title="Lägg till tjänare"
             onPress={() => 
-              fetchServantsData()
+              setCreateServantModalVisible(true)
             }
           />
         </View>
       </View>      
     );
 }
+
+/*
+<View style={styles.option}>
+  <Button
+    style={styles.headerText}
+    title="Uppdatera"
+    onPress={() => 
+      fetchServantsData()
+    }
+  />
+</View>
+*/
 
 function OptionButton({ icon, information, onPress}) {
   return (

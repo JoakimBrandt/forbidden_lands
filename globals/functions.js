@@ -3,6 +3,35 @@ import * as axios from 'react-native-axios';
 
 module.exports = {
 
+    fetchKeep: async () => {
+        await axios.get('http://18.197.158.213/keeps')
+        .then(({data}) => {
+            data.keeps.forEach(keep => {
+                GLOBALVARIABLES.keepName = keep.name
+                GLOBALVARIABLES.treasury = keep.treasury
+                GLOBALVARIABLES.keepId = keep.id
+            });
+        })
+        .catch(error => {
+            console.log("THIS IS AN ERROR: " + error)
+        })
+    },
+
+    updateTreasury: async (keepId, newTreasury) => {
+        console.log(keepId)
+        console.log(newTreasury)
+
+        await axios.put('http://18.197.158.213/keeps/'+keepId+'/treasury', {
+            treasury: newTreasury
+        })
+        .then(response => {
+            console.log(response)
+        })
+        .catch(error => {
+            console.log("THIS IS AN ERROR: " + error)
+        })
+    },
+
     fetchServants: async () => {
         await axios.get('http://18.197.158.213/servants')
         .then(({data}) => {
@@ -15,6 +44,23 @@ module.exports = {
             GLOBALVARIABLES.totalAmountOfServants = servantsAmount;
             GLOBALVARIABLES.totalSalary = salary;
             GLOBALVARIABLES.servants = data.servants;
+        })
+        .catch(error => {
+            console.log("THIS IS AN ERROR: " + error)
+        })
+    },
+
+    createServant: async (servantData) => {
+
+        await axios.post('http://18.197.158.213/servants', {
+            'name':servantData.name,
+            'salary':servantData.salary,
+            'amount':servantData.amount,
+            'production_amount':servantData.production_amount,
+            'production_type':servantData.production_type
+        })
+        .then((response) => {
+            console.log(response)
         })
         .catch(error => {
             console.log("THIS IS AN ERROR: " + error)
