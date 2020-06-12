@@ -12,6 +12,7 @@ export default function HomeScreen() {
   const [treasury, setTreasury] = React.useState(0);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [newTreasury, setNewTreasury]= React.useState(0)
+  const [keepName, setKeepName] = React.useState("")
 
   React.useEffect(() => {
     fetchAPIData()
@@ -62,12 +63,13 @@ export default function HomeScreen() {
                         },
                         { text: "OK", 
                         onPress: () => { 
-                          console.log("Skattkammaren: " + newTreasury)
-                          GLOBALVARIABLES.treasury += parseInt(newTreasury, 10)
-                          setTreasury(GLOBALVARIABLES.treasury)
-                          console.log("GlobalVariablen: " + GLOBALVARIABLES.treasury)
+
+                          let currenTreasury = GLOBALVARIABLES.treasury
+                          let updatedTreasury = currenTreasury + parseInt(newTreasury, 10)
+                          GLOBALFUNCTIONS.updateTreasury(GLOBALVARIABLES.keepId, updatedTreasury)
                           setNewTreasury(0)
                           setModalVisible(!modalVisible)
+
                         }}
                       ],
                       { cancelable: false }
@@ -97,7 +99,7 @@ export default function HomeScreen() {
 
       <View style={GLOBALSTYLES.textContainer}>
         <Text style={GLOBALSTYLES.text}>
-          Välkomna hem till Vidbäcka
+          Välkomna hem till {GLOBALVARIABLES.keepName} {GLOBALVARIABLES.keepId}
         </Text>
       </View>
 
@@ -197,6 +199,8 @@ export default function HomeScreen() {
     await GLOBALFUNCTIONS.fetchFunctions()
     await GLOBALFUNCTIONS.fetchResources()
     await GLOBALFUNCTIONS.fetchServants()
+    await GLOBALFUNCTIONS.fetchKeep()
+    await setTreasury(GLOBALVARIABLES.treasury)
     await setAmountOfServants(GLOBALVARIABLES.totalAmountOfServants)
     await setTotalSalary(GLOBALVARIABLES.totalSalary)
     await setTreasury(GLOBALVARIABLES.treasury)
