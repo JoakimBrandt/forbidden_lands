@@ -3,6 +3,8 @@ module.exports = {
     resources: {},
     functions: {},
 
+    keepName: null,
+    keepId: null,
     treasury: null,
     totalSalary: null,
     totalAmountOfServants: null,
