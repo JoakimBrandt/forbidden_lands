@@ -5,9 +5,12 @@
 
 ## Release History
 
-* 0.2.1
+* 0.1.1
     * CHANGE: Completely overhauls project and adds fully functional synchronization between application and API
-
+* 0.1.2
+    * ADD: Creation of servants can now be done from within the app
+    * ADD: Creation of functions can now be done from within the app
+    * ADD: Now, the application fetches data about Name and Treasury amount from the API, specific to your Keep
 
 ## Meta
 
